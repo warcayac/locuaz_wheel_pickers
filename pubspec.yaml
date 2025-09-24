@@ -1,0 +1,30 @@
+name: locuaz_wheel_pickers
+description: "A comprehensive collection of iOS-style wheel picker widgets for Flutter with advanced dependency management and performance optimization."
+version: 1.0.0
+homepage: https://github.com/warcayac/locuaz_wheel_pickers
+repository: https://github.com/warcayac/locuaz_wheel_pickers
+issue_tracker: https://github.com/warcayac/locuaz_wheel_pickers/issues
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  get: ^4.7.2
+  google_fonts: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+topics:
+  - widgets
+  - picker
+  - ios
+  - wheel
+  - date-picker
+  - time-picker
+
+flutter:

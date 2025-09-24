@@ -1,0 +1,35 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+  errors:
+    todo: ignore
+    use_string_buffers: info
+    prefer_single_quotes: info
+    exhaustive_cases: warning
+    # prefer_const_constructors: ignore
+    avoid_function_literals_in_foreach_calls: ignore
+    unused_element: warning
+    unused_local_variable: warning
+    unused_import: warning
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.gql.dart"
+    - "**/*.gr.dart"
+    - "**/*.config.dart"
+
+linter:
+  rules:
+    - prefer_relative_imports
+    - use_string_buffers
+    - prefer_single_quotes
+    - exhaustive_cases
+    - avoid_unused_constructor_parameters
+    - avoid_void_async
+    - prefer_final_locals
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - prefer_final_fields
