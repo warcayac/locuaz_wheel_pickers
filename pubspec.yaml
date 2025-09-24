@@ -1,6 +1,6 @@
 name: locuaz_wheel_pickers
 description: "A comprehensive collection of iOS-style wheel picker widgets for Flutter with advanced dependency management and performance optimization."
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/warcayac/locuaz_wheel_pickers
 repository: https://github.com/warcayac/locuaz_wheel_pickers
 issue_tracker: https://github.com/warcayac/locuaz_wheel_pickers/issues
