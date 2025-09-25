@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' hide TimeOfDay;
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' as wpickers show TimeOfDay;
+import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' hide WTimeOfDay;
+import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' as wpickers show WTimeOfDay;
 
 /// Example app demonstrating Locuaz Wheel Pickers usage
 void main() {
@@ -1058,21 +1058,21 @@ class TimePickerExamplePage extends StatefulWidget {
 }
 
 class _TimePickerExamplePageState extends State<TimePickerExamplePage> {
-  wpickers.TimeOfDay _selectedTime1 = wpickers.TimeOfDay(
+  wpickers.WTimeOfDay _selectedTime1 = wpickers.WTimeOfDay(
     hour: DateTime.now().hour,
     minute: DateTime.now().minute,
     second: DateTime.now().second,
     is24Hour: true,
   );
   
-  wpickers.TimeOfDay _selectedTime2 = const wpickers.TimeOfDay(
+  wpickers.WTimeOfDay _selectedTime2 = const wpickers.WTimeOfDay(
     hour: 14,
     minute: 30,
     second: 0,
     is24Hour: false,
   );
   
-  wpickers.TimeOfDay _selectedTime3 = const wpickers.TimeOfDay(
+  wpickers.WTimeOfDay _selectedTime3 = const wpickers.WTimeOfDay(
     hour: 9,
     minute: 15,
     second: 45,
@@ -1227,7 +1227,7 @@ class _TimePickerExamplePageState extends State<TimePickerExamplePage> {
               _buildFeatureItem('• Optional seconds wheel'),
               _buildFeatureItem('• Customizable separators'),
               _buildFeatureItem('• Smooth scrolling performance'),
-              _buildFeatureItem('• Consistent TimeOfDay interface'),
+              _buildFeatureItem('• Consistent WTimeOfDay interface'),
             ],
           ),
         ),

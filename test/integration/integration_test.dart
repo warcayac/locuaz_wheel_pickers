@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' hide TimeOfDay;
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' as wpickers show TimeOfDay;
+import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' hide WTimeOfDay;
+import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' as wpickers show WTimeOfDay;
 
 void main() {
   group('Integration Tests - All Widgets', () {
@@ -169,7 +169,7 @@ void main() {
     });
 
     testWidgets('WTimePicker integration test', (tester) async {
-      wpickers.TimeOfDay selectedTime = const wpickers.TimeOfDay(
+      wpickers.WTimeOfDay selectedTime = const wpickers.WTimeOfDay(
         hour: 12,
         minute: 0,
         second: 0,

@@ -50,7 +50,7 @@ CupertinoDatePicker(
   use24hFormat: false,
   onDateTimeChanged: (DateTime dateTime) {
     setState(() {
-      selectedTime = TimeOfDay.fromDateTime(dateTime);
+      selectedTime = WTimeOfDay.fromDateTime(dateTime);
     });
   },
 )
@@ -59,9 +59,9 @@ CupertinoDatePicker(
 **After (Locuaz Wheel Pickers):**
 ```dart
 WTimePicker(
-  initialTime: TimeOfDay.now(),
+  initialTime: WTimeOfDay.now(),
   use24hFormat: false,
-  onChanged: (TimeOfDay time) {
+  onChanged: (WTimeOfDay time) {
     setState(() {
       selectedTime = time;
     });
@@ -103,7 +103,7 @@ Column(
     Container(
       height: 200,
       child: WTimePicker(
-        initialTime: TimeOfDay.now(),
+        initialTime: WTimeOfDay.now(),
         onChanged: (time) {
           setState(() {
             selectedTime = time;

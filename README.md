@@ -50,6 +50,8 @@ WListPicker(
 )
 ```
 
+![WListPicker](images/doc/01_WListPicker.png)
+
 ### 2. WDatePicker - Date Selection
 
 iOS-style date picker with customizable format:
@@ -63,18 +65,22 @@ WDatePicker(
 )
 ```
 
+![WDatePicker](images/doc/02_WDatePicker.png)
+
 ### 3. WTimePicker - Time Selection
 
 Time picker with 12/24 hour format support:
 
 ```dart
 WTimePicker(
-  initialTime: TimeOfDay(hour: 12, minute: 0, second: 0, is24Hour: true),
+  initialTime: WTimeOfDay(hour: 12, minute: 0, second: 0, is24Hour: true),
   use24Hour: true,
   showSeconds: true,
   onChanged: (time) => print('Selected time: $time'),
 )
 ```
+
+![WTimePicker](images/doc/03_WTimePicker.png)
 
 ### 4. SimpleWheelPickerBuilder - Static Implementation
 
@@ -100,12 +106,18 @@ SimpleWheelPickerBuilder(
 )
 ```
 
+![SimpleWheelPickerBuilder](images/doc/04_SimpleWheelPickerBuilder.png)
+
 ### 5. SelectiveWheelPickerBuilder - Dynamic Implementation
 
 For complex scenarios with wheel dependencies (e.g., Country → State → City):
 
 ```dart
 SelectiveWheelPickerBuilder(
+  textStyle: (isSelected) => TextStyle(
+    fontSize: 13, 
+    color: isSelected ? Colors.blue : Colors.black
+  ),
   wheels: [
     // Country wheel (independent)
     WheelConfig(
@@ -160,6 +172,8 @@ SelectiveWheelPickerBuilder(
 )
 ```
 
+![SelectiveWheelPickerBuilder](images/doc/05_SelectiveWheelPickerBuilder.png)
+
 ## Advanced Customization
 
 ### Custom Separators
@@ -170,18 +184,20 @@ Add custom separators between wheels:
 SimpleWheelPickerBuilder(
   wheels: [
     WheelConfig(
+      initialIndex: 0,
       itemCount: 12,
       formatter: (index) => '${index + 1}',
       width: 60,
-      trailingSeparator: WheelSeparators.colon(),
+      trailingSeparator: const WheelSeparators().colon(),
     ),
     WheelConfig(
+      initialIndex: 0,
       itemCount: 60,
       formatter: (index) => index.toString().padLeft(2, '0'),
       width: 60,
-      trailingSeparator: WheelSeparators.space(),
     ),
     WheelConfig(
+      initialIndex: 0,
       itemCount: 2,
       formatter: (index) => index == 0 ? 'AM' : 'PM',
       width: 60,
@@ -191,6 +207,8 @@ SimpleWheelPickerBuilder(
 )
 ```
 
+![CustomSeparators](images/doc/06_CustomSeparators.png)
+
 ### Custom Styling
 
 Customize appearance with wheel configuration:
@@ -199,10 +217,11 @@ Customize appearance with wheel configuration:
 SimpleWheelPickerBuilder(
   wheels: [
     WheelConfig(
+      initialIndex: 0,
       itemCount: 10,
       formatter: (index) => 'Item $index',
       width: 120,
-      leadingSeparator: Container(
+      leadingSeparator: const SizedBox(
         width: 20,
         child: Text('→', style: TextStyle(fontSize: 18)),
       ),
@@ -210,10 +229,12 @@ SimpleWheelPickerBuilder(
   ],
   selectedItemColor: Colors.blue,
   unselectedItemColor: Colors.grey,
-  barColor: Colors.blue.withOpacity(0.1),
-  onChanged: (indices) => print('Selected: $indices'),
+  barColor: Colors.blue,
+  onChanged: (indices) => debugPrint('Selected: $indices'),
 )
 ```
+
+![CustomStyling](images/doc/07_Custom_Styling.png)
 
 ## Common Use Cases
 
@@ -221,6 +242,7 @@ SimpleWheelPickerBuilder(
 
 ```dart
 Column(
+  mainAxisAlignment: MainAxisAlignment.center,
   children: [
     // Date picker
     Container(
@@ -235,7 +257,7 @@ Column(
     Container(
       height: 200,
       child: WTimePicker(
-        initialTime: TimeOfDay.now(),
+        initialTime: WTimeOfDay.now(),
         onChanged: (time) => setState(() => selectedTime = time),
         use24hFormat: true,
       ),

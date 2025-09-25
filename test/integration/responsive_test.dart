@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' hide TimeOfDay;
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' as wpickers show TimeOfDay;
+import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' hide WTimeOfDay;
+import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' as wpickers show WTimeOfDay;
 
 void main() {
   group('Responsive Design Tests', () {
@@ -98,7 +98,7 @@ void main() {
                     key: const ValueKey('time_picker'),
                     use24Hour: true,
                     showSeconds: true,
-                    initialTime: const wpickers.TimeOfDay(
+                    initialTime: const wpickers.WTimeOfDay(
                       hour: 12,
                       minute: 0,
                       second: 0,
