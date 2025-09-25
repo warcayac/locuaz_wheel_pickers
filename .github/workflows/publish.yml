@@ -18,13 +18,27 @@ jobs:
     permissions:
       id-token: write # Required for authentication using OIDC
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
         with:
           channel: stable
+
       - name: Install dependencies
         run: flutter pub get
-      # Here you can insert custom steps you need
-      # - run: dart tool/generate-code.dart
-      - name: Publish
-        run: flutter pub publish --force
+
+      # - name: Run tests
+      #   run: flutter test
+
+      # - name: Check package validity
+      #   run: dart pub publish --dry-run
+
+      - name: Publish package
+        uses: k-paxian/dart-package-publisher@v1.5.1
+        with:
+          credentialJson: ${{ secrets.PUB_CREDENTIALS }}
+      # PUB_CREDENTIALS es el nombre de la variable secreta creada en: 
+      # "Settings > Secrets and variables > Actions > New repository secret" 
+      # del REPOSITORIO del presente paquete.
