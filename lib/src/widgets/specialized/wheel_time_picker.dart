@@ -5,18 +5,25 @@ import '../../helpers/wheel_separators.dart';
 import '../../models/wheel_config.dart';
 
 
-class TimeOfDay {
+class WTimeOfDay {
   final int hour; // always 0-23
   final int minute;
   final int second;
   final bool is24Hour;
   /* -------------------------------------------------------------------------------------- */
-  const TimeOfDay({
+  const WTimeOfDay({
     required this.hour,
     required this.minute,
     required this.second,
     required this.is24Hour,
   });
+  /* -------------------------------------------------------------------------------------- */
+  WTimeOfDay.now() : this(
+    hour: DateTime.now().hour,
+    minute: DateTime.now().minute,
+    second: DateTime.now().second,
+    is24Hour: true,
+  );
   /* -------------------------------------------------------------------------------------- */
   int get displayHour => is24Hour ? hour : (hour == 0 || hour == 12 ? 12 : hour % 12);
   /* -------------------------------------------------------------------------------------- */
@@ -28,8 +35,8 @@ class TimeOfDay {
 class WTimePicker extends StatefulWidget {
   final bool use24Hour;
   final bool showSeconds;
-  final TimeOfDay initialTime;
-  final ValueChanged<TimeOfDay>? onChanged;
+  final WTimeOfDay initialTime;
+  final ValueChanged<WTimeOfDay>? onChanged;
   final bool showSeparator;
   final Color? selectedItemColor;
   final Color? unselectedItemColor;
@@ -41,7 +48,7 @@ class WTimePicker extends StatefulWidget {
     super.key,
     this.use24Hour = true,
     this.showSeconds = true,
-    TimeOfDay? initialTime,
+    WTimeOfDay? initialTime,
     this.onChanged,
     this.showSeparator = false,
     this.selectedItemColor,
@@ -50,7 +57,7 @@ class WTimePicker extends StatefulWidget {
     this.barColor,
     this.textStyle,
   }) : initialTime = initialTime ??
-    TimeOfDay(
+    WTimeOfDay(
       hour: DateTime.now().hour,
       minute: DateTime.now().minute,
       second: DateTime.now().second,
@@ -109,7 +116,7 @@ class _WTimePickerState extends State<WTimePicker> {
     }
 
     widget.onChanged?.call(
-      TimeOfDay(
+      WTimeOfDay(
         hour: _hour,
         minute: _minute,
         second: _second,
