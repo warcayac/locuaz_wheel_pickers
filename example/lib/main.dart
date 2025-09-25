@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' hide WTimeOfDay;
-import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart' as wpickers show WTimeOfDay;
+import 'package:locuaz_wheel_pickers/locuaz_wheel_pickers.dart';
 
 /// Example app demonstrating Locuaz Wheel Pickers usage
 void main() {
@@ -35,7 +34,7 @@ class ExampleHomePage extends StatelessWidget {
       title: const Text('Locuaz Wheel Pickers Demo'),
       centerTitle: true,
     ),
-    body: Padding(
+    body: SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -882,7 +881,7 @@ class _DatePickerExamplePageState extends State<DatePickerExamplePage> {
                 selectedValue: _formatDate(_selectedDate1),
                 child: WDatePicker(
                   initialDate: _selectedDate1,
-                  format: DateFormat.dMMy,
+                  format: EDateFormat.dMMy,
                   language: Lang.en,
                   showSeparator: true,
                   onChanged: (date) {
@@ -899,7 +898,7 @@ class _DatePickerExamplePageState extends State<DatePickerExamplePage> {
                 selectedValue: _formatDate(_selectedDate2),
                 child: WDatePicker(
                   initialDate: _selectedDate2,
-                  format: DateFormat.dMMMy,
+                  format: EDateFormat.dMMMy,
                   language: Lang.es,
                   showSeparator: false,
                   selectedItemColor: Colors.green,
@@ -918,7 +917,7 @@ class _DatePickerExamplePageState extends State<DatePickerExamplePage> {
                 selectedValue: _formatMonthYear(_selectedDate3),
                 child: WDatePicker(
                   initialDate: _selectedDate3,
-                  format: DateFormat.xMMMy,
+                  format: EDateFormat.xMMMy,
                   language: Lang.en,
                   startYear: 2020,
                   endYear: 2030,
@@ -1058,21 +1057,21 @@ class TimePickerExamplePage extends StatefulWidget {
 }
 
 class _TimePickerExamplePageState extends State<TimePickerExamplePage> {
-  wpickers.WTimeOfDay _selectedTime1 = wpickers.WTimeOfDay(
+  WTimeOfDay _selectedTime1 = WTimeOfDay(
     hour: DateTime.now().hour,
     minute: DateTime.now().minute,
     second: DateTime.now().second,
     is24Hour: true,
   );
   
-  wpickers.WTimeOfDay _selectedTime2 = const wpickers.WTimeOfDay(
+  WTimeOfDay _selectedTime2 = const WTimeOfDay(
     hour: 14,
     minute: 30,
     second: 0,
     is24Hour: false,
   );
   
-  wpickers.WTimeOfDay _selectedTime3 = const wpickers.WTimeOfDay(
+  WTimeOfDay _selectedTime3 = const WTimeOfDay(
     hour: 9,
     minute: 15,
     second: 45,
@@ -1280,8 +1279,7 @@ class ComplexDependencyExamplePage extends StatefulWidget {
       _ComplexDependencyExamplePageState();
 }
 
-class _ComplexDependencyExamplePageState 
-    extends State<ComplexDependencyExamplePage> {
+class _ComplexDependencyExamplePageState extends State<ComplexDependencyExamplePage> {
   final GlobalKey _locationPickerKey = GlobalKey();
   final GlobalKey _performancePickerKey = GlobalKey();
   
@@ -1354,40 +1352,50 @@ class _ComplexDependencyExamplePageState
   Widget _buildLocationPicker() => Card(
         elevation: 4,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(2),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Location Picker (Country → State → City)',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Text(
-                'State wheel updates when country changes, '
-                'city wheel updates when state changes',
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Selected: $_selectedLocation',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.blue,
+              Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Location Picker (Country → State → City)',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text(
+                      'State wheel updates when country changes, '
+                      'city wheel updates when state changes',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Selected: $_selectedLocation',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16),
-              Center(
-                child: SelectiveWheelPickerBuilder(
-                  key: _locationPickerKey,
-                  wheels: _buildLocationWheels(),
-                  selectedItemColor: Colors.green,
-                  barColor: Colors.green.withValues(alpha: 0.1),
-                  onChanged: _handleLocationChange,
+              SelectiveWheelPickerBuilder(
+                key: _locationPickerKey,
+                wheels: _buildLocationWheels(),
+                selectedItemColor: Colors.green,
+                barColor: Colors.green.withValues(alpha: 0.1),
+                onChanged: _handleLocationChange,
+                textStyle: (isSelected) => TextStyle(
+                  fontSize: 13,
+                  color: isSelected ? Colors.green : Colors.black,
                 ),
               ),
             ],
@@ -1432,6 +1440,10 @@ class _ComplexDependencyExamplePageState
                   selectedItemColor: Colors.purple,
                   barColor: Colors.purple.withValues(alpha: 0.1),
                   onChanged: _handlePerformanceChange,
+                  textStyle: (isSelected) => TextStyle(
+                    fontSize: 13,
+                    color: isSelected ? Colors.purple : Colors.black,
+                  ),
                 ),
               ),
             ],

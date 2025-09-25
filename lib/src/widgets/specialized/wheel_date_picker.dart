@@ -7,7 +7,7 @@ import '../../models/wheel_config.dart';
 import '../../models/wheel_dependency.dart';
 
 
-enum DateFormat {
+enum EDateFormat {
   dMy, dMMy, dMMMy, // day-month-year
   xMy, xMMy, xMMMy, // month-year
 }
@@ -21,7 +21,7 @@ class WDatePicker extends StatefulWidget {
   final Color? unselectedItemColor;
   final bool themeAware;
   final Color? barColor;
-  final DateFormat format;
+  final EDateFormat format;
   final TextStyle Function(bool isSelected)? textStyle;
   final bool showSeparator;
   final Lang language;
@@ -36,7 +36,7 @@ class WDatePicker extends StatefulWidget {
     this.unselectedItemColor,
     this.themeAware = true,
     this.barColor,
-    this.format = DateFormat.dMMy,
+    this.format = EDateFormat.dMMy,
     this.textStyle,
     this.showSeparator = false,
     this.language = Lang.es,
@@ -105,7 +105,7 @@ class _WDatePickerState extends State<WDatePicker> {
     return day > maxDays ? maxDays : day;
   }
   /* -------------------------------------------------------------------------------------- */
-  bool get _isDayWheelVisible => [DateFormat.dMy,DateFormat.dMMy,DateFormat.dMMMy].contains(widget.format);
+  bool get _isDayWheelVisible => [EDateFormat.dMy,EDateFormat.dMMy,EDateFormat.dMMMy].contains(widget.format);
   /* -------------------------------------------------------------------------------------- */
   Widget? get _separator => widget.showSeparator
     ? WheelSeparators(
@@ -175,12 +175,12 @@ class _WDatePickerState extends State<WDatePicker> {
     );
   }
   /* -------------------------------------------------------------------------------------- */
-  WheelConfig _getMonthWheel(DateFormat format) {
+  WheelConfig _getMonthWheel(EDateFormat format) {
     final months = widget.language == Lang.en ? _monthsEn : _monthsEs;
     final (String Function(int) f, double w) = switch (format) {
-      DateFormat.dMy || DateFormat.xMy => ((i) => (i + 1).toString(), 50),
-      DateFormat.dMMy || DateFormat.xMMy => ((i) => months[i].substring(0, 3), 70),
-      DateFormat.dMMMy || DateFormat.xMMMy => ((i) => months[i], 140),
+      EDateFormat.dMy || EDateFormat.xMy => ((i) => (i + 1).toString(), 50),
+      EDateFormat.dMMy || EDateFormat.xMMy => ((i) => months[i].substring(0, 3), 70),
+      EDateFormat.dMMMy || EDateFormat.xMMMy => ((i) => months[i], 140),
     };
 
     return WheelConfig(

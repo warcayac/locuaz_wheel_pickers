@@ -55,7 +55,7 @@ void main() {
             body: Center(
               child: WDatePicker(
                 initialDate: DateTime(2024, 6, 15),
-                format: DateFormat.dMMy,
+                format: EDateFormat.dMMy,
                 language: Lang.en,
                 onChanged: (date) {},
               ),

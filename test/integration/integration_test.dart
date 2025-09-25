@@ -142,7 +142,7 @@ void main() {
           home: Scaffold(
             body: WDatePicker(
               initialDate: DateTime(2024, 6, 15),
-              format: DateFormat.dMMy,
+              format: EDateFormat.dMMy,
               language: Lang.en,
               onChanged: (date) {
                 selectedDate = date;

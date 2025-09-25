@@ -433,7 +433,7 @@ Use specialized widgets for common use cases:
 ```dart
 // Instead of building custom date logic
 WDatePicker(
-  format: DateFormat.dMMMy,
+  format: EDateFormat.dMMMy,
   language: Lang.en,
   onChanged: (date) => handleDateChange(date),
 )

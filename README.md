@@ -59,7 +59,7 @@ iOS-style date picker with customizable format:
 ```dart
 WDatePicker(
   initialDate: DateTime.now(),
-  format: DateFormat.dMMy, // Day-Month-Year with abbreviated months
+  format: EDateFormat.dMMy, // Day-Month-Year with abbreviated months
   language: Lang.en,
   onChanged: (date) => print('Selected date: $date'),
 )
@@ -271,163 +271,129 @@ Column(
 ```dart
 // Example: Pizza ordering system
 SelectiveWheelPickerBuilder(
-  configs: [
-    // Size wheel
+  wheels: [
+    // Size wheel (static)
     WheelConfig(
       wheelId: 'size',
       itemCount: pizzaSizes.length,
-      formatter: (index) => pizzaSizes[index].name,
-      onChanged: (index) => updatePricing(),
+      initialIndex: _currentSizeIdx,
+      formatter: (i) => pizzaSizes[i].name,
+      width: 110,
     ),
     // Toppings wheel (depends on size for availability)
     WheelConfig(
       wheelId: 'toppings',
-      itemCount: 1,
-      formatter: (index) => 'Topping $index',
+      itemCount: getAvailableToppings(_currentSizeIdx).length,
+      initialIndex: _currentToppingIdx,
+      formatter: (i) => getAvailableToppings(_currentSizeIdx)[i],
+      width: 160,
       dependency: WheelDependency(
         dependsOn: [0], // Depends on size
-        calculateItemCount: (deps) => getAvailableToppings(deps[0]).length,
-        buildFormatter: (deps) => (index) => getAvailableToppings(deps[0])[index],
+        // Recompute item count when size changes
+        calculateItemCount: (deps) {
+          final sizeIdx = deps[0];
+          return getAvailableToppings(sizeIdx).length;
+        },
+        // Keep selection valid if list shrinks
+        calculateInitialIndex: (deps, currentSelection) {
+          final sizeIdx = deps[0];
+          final max = getAvailableToppings(sizeIdx).length;
+          if (max == 0) return 0;
+          return currentSelection.clamp(0, max - 1);
+        },
+        // Build a formatter bound to the filtered list
+        buildFormatter: (deps) {
+          final sizeIdx = deps[0];
+          final list = getAvailableToppings(sizeIdx);
+          return (i) => list[i];
+        },
       ),
     ),
   ],
+  onChanged: (indices) {
+    setState(() {
+      _currentSizeIdx = indices[0];
+      _currentToppingIdx = indices[1];
+      updatePricing();
+    });
+  },
 )
 ```
+
+![Multi-Level Dependencies](images/doc/08_Multi_Level_Dependencies.png)
 
 ### Custom Business Logic
 
 ```dart
 // Example: Appointment booking with time slots
 SelectiveWheelPickerBuilder(
-  configs: [
-    // Date wheel
+  wheels: [
+    // Date wheel (next 30 days)
     WheelConfig(
       wheelId: 'date',
-      itemCount: 30, // Next 30 days
-      formatter: (index) => DateFormat('MMM dd').format(
-        DateTime.now().add(Duration(days: index)),
-      ),
+      itemCount: 30,
+      initialIndex: _dateIndex,
+      formatter: (index) => DateFormat(
+        'MMM dd',
+      ).format(DateTime.now().add(Duration(days: index))),
+      width: 100,
     ),
+
     // Time slot wheel (depends on selected date)
     WheelConfig(
       wheelId: 'timeSlot',
-      itemCount: 1,
-      formatter: (index) => 'Time $index',
+      // Ensure at least 1 to keep the wheel renderable, display "No slots"
+      itemCount: hasSlots ? slots.length : 1,
+      initialIndex: hasSlots
+          ? _slotIndex.clamp(0, slots.length - 1)
+          : 0,
+      formatter: (index) =>
+          hasSlots ? slots[index].format() : 'No slots',
+      width: 120,
       dependency: WheelDependency(
+        // Depends on date wheel at index 0
         dependsOn: [0],
+
+        // Recompute count dynamically
         calculateItemCount: (deps) {
-          DateTime selectedDate = DateTime.now().add(Duration(days: deps[0]));
-          return getAvailableTimeSlots(selectedDate).length;
+          final selectedDate = DateTime.now().add(
+            Duration(days: deps[0]),
+          );
+          final list = getAvailableTimeSlots(selectedDate);
+          return list.isEmpty ? 1 : list.length; // keep wheel usable
         },
-        buildFormatter: (deps) => (index) {
-          DateTime selectedDate = DateTime.now().add(Duration(days: deps[0]));
-          return getAvailableTimeSlots(selectedDate)[index].format();
+
+        // Keep selection valid after dependency changes
+        calculateInitialIndex: (deps, currentSelection) {
+          final selectedDate = DateTime.now().add(
+            Duration(days: deps[0]),
+          );
+          final list = getAvailableTimeSlots(selectedDate);
+          if (list.isEmpty) return 0; // "No slots"
+          return currentSelection.clamp(0, list.length - 1);
+        },
+
+        // Build formatter bound to date-specific list
+        buildFormatter: (deps) {
+          final selectedDate = DateTime.now().add(
+            Duration(days: deps[0]),
+          );
+          final list = getAvailableTimeSlots(selectedDate);
+          if (list.isEmpty) return (i) => 'No slots';
+          return (i) => list[i].format();
         },
       ),
     ),
   ],
+
+  // Centralized state update
+  onChanged: (indices) {
+    setState(() {
+      _dateIndex = indices[0];
+      _slotIndex = indices[1];
+    });
+  },
 )
 ```
 
-## Migration Guide
-
-### From CupertinoDatePicker
-
-```dart
-// Before
-CupertinoDatePicker(
-  mode: CupertinoDatePickerMode.date,
-  onDateTimeChanged: (date) => print(date),
-)
-
-// After
-WDatePicker(
-  initialDate: DateTime.now(),
-  format: DateFormat.dMMy,
-  language: Lang.en,
-  onChanged: (date) => print(date),
-)
-```
-
-### From Custom ListWheelScrollView
-
-```dart
-// Before
-ListWheelScrollView(
-  itemExtent: 40,
-  children: items.map((item) => Text(item)).toList(),
-)
-
-// After
-WListPicker(
-  items: items,
-  onChanged: (index) => print('Selected: ${items[index]}'),
-)
-```
-
-## Documentation
-
-- [API Documentation](https://pub.dev/documentation/locuaz_wheel_pickers/latest/)
-- [Example App](example/) - Complete working examples
-- [Migration Guide](example/MIGRATION_GUIDE.md) - Migrate from other picker libraries
-- [Performance Comparison](example/PERFORMANCE_COMPARISON.md) - Detailed performance analysis
-
-## Performance Benefits
-
-Locuaz Wheel Pickers provides significant performance improvements over traditional implementations:
-
-### Key Performance Metrics
-
-- **85% reduction** in unnecessary widget recreations
-- **90% improvement** in scroll smoothness for dependent wheels
-- **70% reduction** in memory allocation during wheel updates
-- **60% reduction** in CPU usage during complex dependency calculations
-
-### Performance Comparison
-
-| Scenario | Traditional Approach | Locuaz Wheel Pickers | Improvement |
-|----------|---------------------|---------------------|-------------|
-| 3-wheel dependency (Country→State→City) | Recreates all wheels on any change | Recreates only affected wheels | 85% fewer recreations |
-| Smooth scrolling | Stutters during dependency updates | Maintains 60fps | 90% smoother |
-| Memory usage | High allocation during updates | Optimized controller reuse | 70% less memory |
-| Complex calculations | Blocks UI thread | Efficient batched updates | 60% less CPU |
-
-### When to Use Each Builder
-
-**Use `SimpleWheelPickerBuilder` when:**
-- Wheels are independent (no dependencies)
-- Simple use cases with static data
-- Maximum performance is needed
-- Memory usage should be minimal
-
-**Use `SelectiveWheelPickerBuilder` when:**
-- Wheels have dependencies (one affects another)
-- Dynamic data that changes based on selections
-- Complex business logic for wheel relationships
-- Need intelligent recreation management
-
-### Performance Tips
-
-1. **Use appropriate builder**: Choose `SimpleWheelPickerBuilder` for independent wheels
-2. **Minimize dependencies**: Reduce the number of dependent wheels when possible
-3. **Optimize formatters**: Keep formatter functions lightweight
-4. **Batch updates**: Use the built-in batching for multiple simultaneous changes
-5. **Dispose properly**: Always dispose controllers when widgets are removed
-
-## Contributing
-
-Contributions are welcome! Please read our [contributing guidelines](CONTRIBUTING.md) before submitting pull requests.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-- [Issue Tracker](https://github.com/warcayac/locuaz_wheel_pickers/issues)
-- [Discussions](https://github.com/warcayac/locuaz_wheel_pickers/discussions)
-- [Documentation](https://pub.dev/documentation/locuaz_wheel_pickers/latest/)
-
-## Changelog
-
-See [CHANGELOG.md](CHANGELOG.md) for a detailed list of changes and updates.
+![Custom Business Logic](images/doc/09_Custom_Business_Logic.png)
