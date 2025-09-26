@@ -13,10 +13,10 @@ import 'wheel_dependency.dart';
 /// ```dart
 /// WheelConfig(
 ///   itemCount: 24,
-///   initialIndex: 0,
 ///   formatter: (index) => index.toString().padLeft(2, '0'),
 ///   width: 60,
 ///   wheelId: 'hour_wheel',
+///   // initialIndex defaults to 0
 /// )
 /// ```
 /// 
@@ -25,11 +25,11 @@ import 'wheel_dependency.dart';
 /// ```dart
 /// WheelConfig(
 ///   itemCount: 60,
-///   initialIndex: 0,
 ///   formatter: (index) => index.toString().padLeft(2, '0'),
 ///   width: 60,
 ///   wheelId: 'minute_wheel',
 ///   trailingSeparator: WheelSeparators().colon(),
+///   // initialIndex defaults to 0
 /// )
 /// ```
 /// 
@@ -38,17 +38,26 @@ import 'wheel_dependency.dart';
 /// ```dart
 /// WheelConfig(
 ///   itemCount: 12,
-///   initialIndex: 0,
 ///   formatter: (index) => months[index],
 ///   width: 100,
 ///   wheelId: 'month_wheel',
 ///   onChanged: (index) {
 ///     print('Month changed to: ${months[index]}');
 ///   },
+///   // initialIndex defaults to 0
 /// )
 /// ```
 class WheelConfig {
   final int itemCount;
+  /// **Use default (0):**
+  /// - Simple lists starting from the beginning.
+  /// - Dependent wheels where initial month/year/etc. imply 0 is appropriate and the first visible state is acceptable before dependencies settle.
+  /// 
+  /// **Use explicit non-zero:**
+  /// - You need a meaningful preselected value at initial render (time/date/list).
+  /// - Dependent wheels whose initial state must reflect non-zero drivers at first paint.
+  /// - Large datasets where mid-list starting positions improve UX.
+  /// - Any scenario where initial UI must reflect existing app state.
   final int initialIndex;
   final String Function(int index) formatter;
   final double width;
@@ -60,7 +69,7 @@ class WheelConfig {
   /* -------------------------------------------------------------------------------------- */  
   const WheelConfig({
     required this.itemCount,
-    required this.initialIndex,
+    this.initialIndex = 0,
     required this.formatter,
     this.width = 70,
     this.onChanged,

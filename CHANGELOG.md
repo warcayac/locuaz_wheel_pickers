@@ -1,3 +1,7 @@
+## [1.0.8] - 2025-09-25
+
+- **initialIndex** property is now optional, defaulting to 0 for *WheelConfig* class
+
 ## [1.0.7] - 2025-09-25
 
 - Improved documentation

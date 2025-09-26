@@ -26,8 +26,8 @@ void main() {
 
       test('creates config with all optional parameters', () {
         final onChangedCallback = (int index) {};
-        final leadingSeparator = const Text('|');
-        final trailingSeparator = const Text(':');
+        const leadingSeparator = Text('|');
+        const trailingSeparator = Text(':');
         final dependency = WheelDependency(
           dependsOn: [0],
           calculateItemCount: (values) => values[0] + 1,
@@ -54,6 +54,16 @@ void main() {
         expect(config.trailingSeparator, equals(trailingSeparator));
         expect(config.wheelId, equals('test_wheel'));
         expect(config.dependency, equals(dependency));
+      });
+
+      test('defaults initialIndex to 0 when omitted', () {
+        final config = WheelConfig(
+          itemCount: 10,
+          formatter: (index) => index.toString(),
+        );
+
+        expect(config.initialIndex, equals(0));
+        expect(config.isValid(), isTrue);
       });
     });
 
@@ -122,6 +132,24 @@ void main() {
         );
 
         expect(config1.needsRecreation(config2), isFalse);
+      });
+
+      test('does not require recreation when comparing default vs explicit initialIndex: 0', () {
+        final configDefault = WheelConfig(
+          itemCount: 10,
+          formatter: (index) => index.toString(),
+          wheelId: 'same',
+        );
+        final configExplicitZero = WheelConfig(
+          itemCount: 10,
+          initialIndex: 0,
+          formatter: (index) => index.toString(),
+          wheelId: 'same',
+        );
+
+        // initialIndex intentionally excluded from recreation triggers
+        expect(configDefault.needsRecreation(configExplicitZero), isFalse);
+        expect(configExplicitZero.needsRecreation(configDefault), isFalse);
       });
 
       test('handles dependency-based recreation correctly', () {
@@ -300,6 +328,14 @@ void main() {
         expect(config.isValid(wheelIndex: 2), isFalse);
         expect(config.isValid(wheelIndex: 1), isTrue);
       });
+
+      test('isValid works when initialIndex is omitted (defaults to 0)', () {
+        final config = WheelConfig(
+          itemCount: 3,
+          formatter: (index) => index.toString(),
+        );
+        expect(config.isValid(), isTrue);
+      });
     });
 
     group('createFromDependency', () {
@@ -332,6 +368,29 @@ void main() {
         expect(newConfig!.itemCount, equals(20)); // 3 + 7 + 10
         expect(newConfig.initialIndex, equals(12)); // within bounds
         expect(newConfig.formatter(5), equals('5'));
+        expect(newConfig.dependency, equals(dependency));
+      });
+
+      test('createFromDependency works when initialIndex is omitted (defaults to 0)', () {
+        final dependency = WheelDependency(
+          dependsOn: [0, 1],
+          calculateItemCount: (values) => values[0] + values[1] + 5,
+          calculateInitialIndex: (values, current) => current.clamp(0, values[0] + values[1] + 4),
+        );
+        // Omit initialIndex to use default 0
+        final config = WheelConfig(
+          itemCount: 10,
+          formatter: (index) => index.toString(),
+          dependency: dependency,
+        );
+
+        // Use a current selection that is in range for the calculated item count
+        final newConfig = config.createFromDependency([2, 3], 4);
+
+        expect(newConfig, isNotNull);
+        expect(newConfig!.itemCount, equals(10)); // 2 + 3 + 5
+        expect(newConfig.initialIndex, equals(4)); // clamped current selection preserved
+        expect(newConfig.formatter(1), equals('1'));
         expect(newConfig.dependency, equals(dependency));
       });
 
@@ -389,6 +448,20 @@ void main() {
         expect(copiedConfig.width, equals(originalConfig.width));
         expect(copiedConfig.wheelId, equals(originalConfig.wheelId));
       });
+
+      test('preserves default initialIndex (0) when omitted and via copyWith', () {
+        final original = WheelConfig(
+          itemCount: 3,
+          formatter: (i) => '$i',
+        );
+        // Assert default is 0
+        expect(original.initialIndex, equals(0));
+
+        // copyWith without changing initialIndex should keep default 0
+        final copied = original.copyWith(width: 90);
+        expect(copied.initialIndex, equals(0));
+        expect(copied.width, equals(90));
+      });
     });
 
     group('equality and hashCode', () {
@@ -439,6 +512,20 @@ void main() {
 
         expect(config, equals(config));
         expect(config.hashCode, equals(config.hashCode));
+      });
+
+      test('configs with default initialIndex equal explicit initialIndex: 0', () {
+        final a = WheelConfig(
+          itemCount: 7,
+          formatter: (i) => '$i',
+        );
+        final b = WheelConfig(
+          itemCount: 7,
+          initialIndex: 0,
+          formatter: (i) => '$i',
+        );
+        expect(a, equals(b));
+        expect(a.hashCode, equals(b.hashCode));
       });
     });
   });
